@@ -6,6 +6,19 @@ from collections import OrderedDict
 # Note that in python3.6 all dicts are ordered, but this is an implementation detail and we don't have methods
 # like move_to_end on bare dict and defaultdict
 class DefaultOrderedDict(OrderedDict):
+    """
+    A combination of collections.OrderedDict and collections.defaultdict.
+
+    >>> d = DefaultOrderedDict(lambda: 0)
+    >>> d['z'] += 1
+    >>> d['y'] = 2
+    >>> 'x' in d
+    False
+    >>> d['x']
+    0
+    >>> list(d.items())
+    [('z', 1), ('y', 2), ('x', 0)]
+    """
     # Source: http://stackoverflow.com/a/6190500/562769
     # with own modifications to make all methods actually work
     def __init__(self, default_factory=None, *a, **kw):
@@ -48,4 +61,3 @@ class DefaultOrderedDict(OrderedDict):
     def __repr__(self):
         return 'DefaultOrderedDict(%s, %s)' % (self.default_factory,
                                                OrderedDict.__repr__(self))
-
