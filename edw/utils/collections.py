@@ -18,14 +18,37 @@ class DefaultOrderedDict(OrderedDict):
     0
     >>> list(d.items())
     [('z', 1), ('y', 2), ('x', 0)]
+
+    >>> d = DefaultOrderedDict((('z', 1), ('y', 2)), default_factory=(lambda: 0))
+    >>> d['x'] == 0
+    True
+    >>> list(d.items())
+    [('z', 1), ('y', 2), ('x', 0)]
+
+    >>> d = DefaultOrderedDict(lambda: 0, (('z', 1), ('y', 2)))
+    >>> d['x']
+    0
+    >>> list(d.items())
+    [('z', 1), ('y', 2), ('x', 0)]
+
+    >>> DefaultOrderedDict()['x']
+    Traceback (most recent call last):
+      ...
+    KeyError: 'x'
+
     """
     # Source: http://stackoverflow.com/a/6190500/562769
     # with own modifications to make all methods actually work
-    def __init__(self, default_factory=None, *a, **kw):
-        if (default_factory is not None and
-                not callable(default_factory)):
-            raise TypeError('first argument must be callable')
-        super().__init__(*a, **kw)
+    def __init__(self, *args, **kwargs):
+        default_factory = None
+        try:
+            default_factory = kwargs.pop('default_factory')
+        except KeyError:
+            if args and callable(args[0]):
+                default_factory = args[0]
+                args = args[1:]
+
+        super().__init__(*args, **kwargs)
         self.default_factory = default_factory
 
     def __getitem__(self, key):
